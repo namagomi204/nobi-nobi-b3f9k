@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect><x>0</x><y>0</y><width>1440</width><height>900</height></rect>
+  </property>
+  <property name="windowTitle">
+   <string>BTC Option Live Terminal</string>
+  </property>
+
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="root" stretch="0,1">
+    <item>
+     <layout class="QHBoxLayout" name="topBar">
+      <item>
+       <widget class="QCheckBox" name="chkPauseTape">
+        <property name="text"><string>一時停止</string></property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnClearTape">
+        <property name="text"><string>クリア</string></property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnSaveTape">
+        <property name="text"><string>保存</string></property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="topSpacer">
+        <property name="orientation"><enum>Qt::Horizontal</enum></property>
+        <property name="sizeHint" stdset="0"><size><width>0</width><height>0</height></size></property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+
+    <item>
+     <widget class="QSplitter" name="splitterMain">
+      <property name="orientation"><enum>Qt::Horizontal</enum></property>
+      <property name="childrenCollapsible"><bool>false</bool></property>
+
+      <!-- 左パネル -->
+      <widget class="QWidget" name="leftPanel">
+       <layout class="QVBoxLayout" name="leftVBox">
+
+        <!-- サマリ＋満期アクティビティ -->
+        <item>
+         <layout class="QHBoxLayout" name="rowSummary">
+          <item>
+           <widget class="QGroupBox" name="groupSummary">
+            <property name="title"><string>ライブサマリ</string></property>
+            <layout class="QGridLayout" name="gridSummary">
+             <item row="0" column="0"><widget class="QLabel" name="labelDVol1m"><property name="text"><string>Δ-Vol（1分）:</string></property></widget></item>
+             <item row="0" column="1"><widget class="QLabel" name="valueDVol1m"><property name="text"><string>0.00</string></property><property name="alignment"><set>Qt::AlignRight|Qt::AlignVCenter</set></property></widget></item>
+             <item row="1" column="0"><widget class="QLabel" name="labelDVol5m"><property name="text"><string>Δ-Vol（5分）:</string></property></widget></item>
+             <item row="1" column="1"><widget class="QLabel" name="valueDVol5m"><property name="text"><string>0.00</string></property><property name="alignment"><set>Qt::AlignRight|Qt::AlignVCenter</set></property></widget></item>
+             <item row="2" column="0"><widget class="QLabel" name="labelIV"><property name="text"><string>IV（代表）:</string></property></widget></item>
+             <item row="2" column="1"><widget class="QLabel" name="valueIV"><property name="text"><string>-</string></property><property name="alignment"><set>Qt::AlignRight|Qt::AlignVCenter</set></property></widget></item>
+            </layout>
+           </widget>
+          </item>
+
+          <item>
+           <widget class="QGroupBox" name="groupExpiryActivity">
+            <property name="title"><string>満期アクティビティ（自動更新）</string></property>
+            <layout class="QVBoxLayout" name="vboxExpAct">
+             <item>
+              <widget class="QTableWidget" name="tableExpiryActivity">
+               <property name="editTriggers"><set>QAbstractItemView::NoEditTriggers</set></property>
+               <property name="alternatingRowColors"><bool>true</bool></property>
+               <property name="selectionBehavior"><enum>QAbstractItemView::SelectRows</enum></property>
+               <property name="sortingEnabled"><bool>true</bool></property>
+               <property name="columnCount"><number>3</number></property>
+               <column><property name="text"><string>満期</string></property></column>
+               <column><property name="text"><string>24h枚数</string></property></column>
+               <column><property name="text"><string>1h枚数</string></property></column>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </item>
+
+        <!-- フィルタ -->
+        <item>
+         <widget class="QGroupBox" name="groupFilters">
+          <property name="title"><string>フィルタ</string></property>
+          <layout class="QGridLayout" name="gridFilters">
+           <item row="0" column="0"><widget class="QLabel" name="labelExpiry"><property name="text"><string>満期:</string></property></widget></item>
+           <item row="0" column="1"><widget class="QComboBox" name="comboExpiry"/></item>
+           <item row="1" column="0"><widget class="QLabel" name="labelMoneyness"><property name="text"><string>マネネス幅:</string></property></widget></item>
+           <item row="1" column="1">
+            <widget class="QComboBox" name="comboMoneyness">
+             <property name="currentIndex"><number>2</number></property>
+             <item><property name="text"><string>ATM±10%</string></property></item>
+             <item><property name="text"><string>ATM±20%</string></property></item>
+             <item><property name="text"><string>All</string></property></item>
+            </widget>
+           </item>
+           <item row="2" column="0"><widget class="QLabel" name="labelSize"><property name="text"><string>大口しきい値（枚）:</string></property></widget></item>
+           <item row="2" column="1">
+            <widget class="QDoubleSpinBox" name="spinMinSize">
+             <property name="decimals"><number>3</number></property>
+             <property name="maximum"><double>999999999.0</double></property>
+             <property name="value"><double>100.0</double></property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+
+        <!-- 監視銘柄 -->
+        <item>
+         <widget class="QGroupBox" name="groupWatch">
+          <property name="title"><string>監視銘柄</string></property>
+          <layout class="QVBoxLayout" name="vboxWatch">
+           <item><widget class="QListWidget" name="listInstruments"/></item>
+           <item>
+            <layout class="QHBoxLayout" name="hWatchBtns">
+             <item><widget class="QPushButton" name="btnRefresh"><property name="text"><string>更新</string></property></widget></item>
+             <item><widget class="QPushButton" name="btnResubscribe"><property name="text"><string>再購読</string></property></widget></item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+
+        <!-- ログ -->
+        <item>
+         <widget class="QGroupBox" name="groupLog">
+          <property name="title"><string>ログ</string></property>
+          <layout class="QVBoxLayout" name="vboxLog">
+           <item>
+            <widget class="QPlainTextEdit" name="plainTextEdit">
+             <property name="lineWrapMode"><enum>QPlainTextEdit::NoWrap</enum></property>
+             <property name="font"><font><family>Consolas</family><pointsize>10</pointsize></font></property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+
+       </layout>
+      </widget>
+
+      <!-- 右パネル -->
+      <widget class="QWidget" name="rightPanel">
+       <layout class="QVBoxLayout" name="rightVBox">
+        <item>
+         <widget class="QTabWidget" name="tabsData">
+          <property name="currentIndex"><number>1</number></property>
+
+          <!-- シグナル -->
+          <widget class="QWidget" name="tabSignals">
+           <attribute name="title"><string>シグナル</string></attribute>
+           <layout class="QVBoxLayout" name="vboxSignals">
+            <item>
+             <widget class="QTableWidget" name="tableSignals">
+              <property name="editTriggers"><set>QAbstractItemView::NoEditTriggers</set></property>
+              <property name="alternatingRowColors"><bool>true</bool></property>
+              <property name="selectionBehavior"><enum>QAbstractItemView::SelectRows</enum></property>
+              <property name="sortingEnabled"><bool>true</bool></property>
+              <property name="columnCount"><number>24</number></property>
+              <column><property name="text"><string>時刻</string></property></column>
+              <column><property name="text"><string>満期</string></property></column>
+              <column><property name="text"><string>方向</string></property></column>
+              <column><property name="text"><string>パターン</string></property></column>
+              <column><property name="text"><string>行使(中心)</string></property></column>
+              <column><property name="text"><string>枚数</string></property></column>
+              <column><property name="text"><string>推定Δ</string></property></column>
+              <column><property name="text"><string>強度(|Δ加重|)</string></property></column>
+              <column><property name="text"><string>名目(USD)</string></property></column>
+              <column><property name="text"><string>Net建値</string></property></column>
+              <column><property name="text"><string>BE下</string></property></column>
+              <column><property name="text"><string>BE上</string></property></column>
+              <column><property name="text"><string>最大損失</string></property></column>
+              <column><property name="text"><string>最大利益</string></property></column>
+              <column><property name="text"><string>Trade IV</string></property></column>
+              <column><property name="text"><string>IVエッジ(bp)</string></property></column>
+              <column><property name="text"><string>OI比率</string></property></column>
+              <column><property name="text"><string>Γ(net)</string></property></column>
+              <column><property name="text"><string>Vanna(net)</string></property></column>
+              <column><property name="text"><string>Charm(net)</string></property></column>
+              <column><property name="text"><string>TTE(分)</string></property></column>
+              <column><property name="text"><string>LinkID</string></property></column>
+              <column><property name="text"><string>Venue</string></property></column>
+              <column><property name="text"><string>Agg(比率)</string></property></column>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+
+          <!-- カーブ（テーブルのみ） -->
+          <widget class="QWidget" name="tabCurves">
+           <attribute name="title"><string>カーブ</string></attribute>
+           <layout class="QVBoxLayout" name="vboxCurvesTablesTab">
+            <item>
+             <widget class="QGroupBox" name="groupGex">
+              <property name="title"><string>GEX（満期プロファイル）</string></property>
+              <layout class="QVBoxLayout" name="vGex">
+               <item>
+                <widget class="QTableWidget" name="tableGexCurve">
+                 <property name="editTriggers"><set>QAbstractItemView::NoEditTriggers</set></property>
+                 <property name="alternatingRowColors"><bool>true</bool></property>
+                 <property name="sortingEnabled"><bool>true</bool></property>
+                 <property name="columnCount"><number>2</number></property>
+                 <column><property name="text"><string>満期</string></property></column>
+                 <column><property name="text"><string>Γ(net)</string></property></column>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupVanna">
+              <property name="title"><string>Vanna（満期プロファイル）</string></property>
+              <layout class="QVBoxLayout" name="vVanna">
+               <item>
+                <widget class="QTableWidget" name="tableVannaCurve">
+                 <property name="editTriggers"><set>QAbstractItemView::NoEditTriggers</set></property>
+                 <property name="alternatingRowColors"><bool>true</bool></property>
+                 <property name="sortingEnabled"><bool>true</bool></property>
+                 <property name="columnCount"><number>2</number></property>
+                 <column><property name="text"><string>満期</string></property></column>
+                 <column><property name="text"><string>Vanna(net)</string></property></column>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupCharm">
+              <property name="title"><string>Charm（満期プロファイル）</string></property>
+              <layout class="QVBoxLayout" name="vCharm">
+               <item>
+                <widget class="QTableWidget" name="tableCharmCurve">
+                 <property name="editTriggers"><set>QAbstractItemView::NoEditTriggers</set></property>
+                 <property name="alternatingRowColors"><bool>true</bool></property>
+                 <property name="sortingEnabled"><bool>true</bool></property>
+                 <property name="columnCount"><number>2</number></property>
+                 <column><property name="text"><string>満期</string></property></column>
+                 <column><property name="text"><string>Charm(net)</string></property></column>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+
+          <!-- レッグ明細 -->
+          <widget class="QWidget" name="tabLegs">
+           <attribute name="title"><string>レッグ明細</string></attribute>
+           <layout class="QVBoxLayout" name="vboxLegs">
+            <item>
+             <widget class="QTableWidget" name="tableLegs">
+              <property name="editTriggers"><set>QAbstractItemView::NoEditTriggers</set></property>
+              <property name="alternatingRowColors"><bool>true</bool></property>
+              <property name="selectionBehavior"><enum>QAbstractItemView::SelectRows</enum></property>
+              <property name="sortingEnabled"><bool>true</bool></property>
+              <property name="columnCount"><number>19</number></property>
+              <column><property name="text"><string>時刻</string></property></column>
+              <column><property name="text"><string>LinkID</string></property></column>
+              <column><property name="text"><string>アグレッサ</string></property></column>
+              <column><property name="text"><string>Venue</string></property></column>
+              <column><property name="text"><string>銘柄</string></property></column>
+              <column><property name="text"><string>Call/Put</string></property></column>
+              <column><property name="text"><string>満期</string></property></column>
+              <column><property name="text"><string>行使</string></property></column>
+              <column><property name="text"><string>数量</string></property></column>
+              <column><property name="text"><string>プレミアム</string></property></column>
+              <column><property name="text"><string>通貨</string></property></column>
+              <column><property name="text"><string>乗数M</string></property></column>
+              <column><property name="text"><string>手数料</string></property></column>
+              <column><property name="text"><string>Trade IV</string></property></column>
+              <column><property name="text"><string>NBBO Bid</string></property></column>
+              <column><property name="text"><string>NBBO Ask</string></property></column>
+              <column><property name="text"><string>Mid</string></property></column>
+              <column><property name="text"><string>乖離(bp)</string></property></column>
+              <column><property name="text"><string>OrderID</string></property></column>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+
+          <!-- ピンマップ -->
+          <widget class="QWidget" name="tabPinMap">
+           <attribute name="title"><string>ピンマップ</string></attribute>
+           <layout class="QVBoxLayout" name="vboxPinMap">
+            <item>
+             <widget class="QTableWidget" name="tablePinMap">
+              <property name="editTriggers"><set>QAbstractItemView::NoEditTriggers</set></property>
+              <property name="alternatingRowColors"><bool>true</bool></property>
+              <property name="selectionBehavior"><enum>QAbstractItemView::SelectRows</enum></property>
+              <property name="sortingEnabled"><bool>true</bool></property>
+              <property name="columnCount"><number>8</number></property>
+              <column><property name="text"><string>満期</string></property></column>
+              <column><property name="text"><string>Call/Put</string></property></column>
+              <column><property name="text"><string>行使</string></property></column>
+              <column><property name="text"><string>現値からの距離(%)</string></property></column>
+              <column><property name="text"><string>残存枚数</string></property></column>
+              <column><property name="text"><string>残存dVol</string></property></column>
+              <column><property name="text"><string>OI</string></property></column>
+              <column><property name="text"><string>Pin指数</string></property></column>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+
+          <!-- グラフ（ここだけで有効） -->
+          <widget class="QWidget" name="tabCharts">
+           <attribute name="title"><string>グラフ</string></attribute>
+           <layout class="QVBoxLayout" name="vboxCharts">
+            <item>
+             <layout class="QHBoxLayout" name="rowSmallCharts">
+              <item><widget class="QChartView" name="viewGamma" native="true"/></item>
+              <item><widget class="QChartView" name="viewVega" native="true"/></item>
+             </layout>
+            </item>
+            <item><widget class="QChartView" name="viewCumPnl" native="true"/></item>
+           </layout>
+          </widget>
+
+          <!-- バースト -->
+          <widget class="QWidget" name="tabBursts">
+           <attribute name="title"><string>バースト</string></attribute>
+           <layout class="QVBoxLayout" name="vboxBursts">
+            <item>
+             <widget class="QTableWidget" name="tableBurstLog">
+              <property name="editTriggers"><set>QAbstractItemView::NoEditTriggers</set></property>
+              <property name="alternatingRowColors"><bool>true</bool></property>
+              <property name="selectionBehavior"><enum>QAbstractItemView::SelectRows</enum></property>
+              <property name="sortingEnabled"><bool>true</bool></property>
+              <property name="columnCount"><number>10</number></property>
+              <column><property name="text"><string>開始</string></property></column>
+              <column><property name="text"><string>最終</string></property></column>
+              <column><property name="text"><string>満期</string></property></column>
+              <column><property name="text"><string>Call/Put</string></property></column>
+              <column><property name="text"><string>中心行使</string></property></column>
+              <column><property name="text"><string>数量合計</string></property></column>
+              <column><property name="text"><string>dVol合計</string></property></column>
+              <column><property name="text"><string>件数</string></property></column>
+              <column><property name="text"><string>銘柄数</string></property></column>
+              <column><property name="text"><string>バケット</string></property></column>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+
+         </widget>
+        </item>
+       </layout>
+      </widget>
+
+     </widget>
+    </item>
+   </layout>
+  </widget>
+
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry"><rect><x>0</x><y>0</y><width>1440</width><height>22</height></rect></property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+
+ <!-- Charts のカスタムウィジェット宣言（名前空間なしで宣言） -->
+ <customwidgets>
+  <customwidget>
+   <class>QChartView</class>
+   <extends>QGraphicsView</extends>
+   <header location="global">QtCharts/QChartView</header>
+  </customwidget>
+ </customwidgets>
+
+ <resources/>
+ <connections/>
+</ui>
